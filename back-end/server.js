@@ -31,7 +31,7 @@ async function main() {
 }
 main().catch(console.error);
 
-//require for user routes
+//user routes
 const userRoute = require("./routes/userRoute");
 
 //middleware

@@ -1,8 +1,7 @@
 const validator = require("validator");
 const bycrypt = require("bcryptjs");
 const db = require("../server");
-
-//console.log(db.dbfunc); NOTE: this is undefined here but not in the context of a function
+const fs = require("fs");
 
 let User = function (data) {
   //console.log(data);
@@ -55,6 +54,17 @@ User.prototype.validate = function () {
       this.errors.push("You must enter a valid email.");
     }
 
+    if (this.photo.size == 0 || this.photo.size > 100000) {
+      this.errors.push("Photo is required.");
+    } else if (
+      validator.isMimeType(this.photo.contentType) == "image/jpeg" ||
+      validator.isMimeType(this.photo.contentType) == "image/giff" ||
+      validator.isMimeType(this.photo.contentType) == "image/jpg" ||
+      validator.isMimeType(this.photo.contentType) == "image/webp"
+    ) {
+      this.errors.push("Photo must be in jpg, png or jpeg format");
+    }
+
     //only when the email is valid then check to see if it's taken
     if (validator.isEmail(this.email)) {
       const targetEmail = await usersCollection.findOne({ email: this.email });
@@ -66,33 +76,42 @@ User.prototype.validate = function () {
   });
 };
 
-//NOTE I added async next line, verify this is correct
 User.prototype.register = async function () {
   return new Promise(async (resolve, reject) => {
-    let { username, email, password, confirmPassword } = this.data;
-    this.username = username.toLowerCase();
-    this.email = email.toLowerCase();
-    this.password = password;
-    this.confirmPassword = confirmPassword;
+    let { fields, files } = this.data;
+    let photoObj = files.photo;
 
+    let photo = {
+      data: fs.readFileSync(photoObj.path),
+      name: photoObj.name,
+      contentType: photoObj.type,
+      size: photoObj.size,
+    };
+
+    this.username = fields.username.toLowerCase();
+    this.email = fields.email.toLowerCase();
+    this.password = fields.password;
+    this.confirmPassword = fields.confirmPassword;
+    this.photo = photo;
+    console.log(photo.name);
     //step 1 validate user data //since we added async function to validate method, we need to make sure that that is
     //completed before we allow other steps to happen
     await this.validate();
 
     //step 2 connect to db
-
     if (!this.errors.length) {
       let con = db.dbfunc;
       console.log(con.databaseName);
       const usersCollection = con.collection("users");
 
       let salt = bycrypt.genSaltSync(10); //number of salt chars
-      this.password = bycrypt.hashSync(password, salt);
+      this.password = bycrypt.hashSync(fields.password, salt);
 
       await usersCollection.insertOne({
         username: this.username,
         email: this.email,
         password: this.password,
+        photo: this.photo,
       });
       resolve();
       //return console.log("successfully added a new user");

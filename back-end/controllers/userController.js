@@ -1,13 +1,32 @@
 const User = require("../models/User");
+const formidable = require("formidable");
 
 exports.home = (req, res) => {
   res.send("This is the home page");
 };
 
 exports.register = (req, res) => {
-  let user = new User(req.body);
-  const result = user.register();
-  res.send(result);
+  let form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({ error: "Image could not be uploaded" });
+    }
+
+    // console.log(fields);
+    // console.log(files);
+
+    let user = new User({ fields, files });
+    user
+      .register()
+      .then(function () {
+        console.log("nice image");
+        return res.send("Nice pic!");
+      })
+      .catch(function (err) {
+        return res.send(err);
+      });
+  });
 };
 
 exports.login = (req, res) => {
