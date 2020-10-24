@@ -9,8 +9,8 @@ function App() {
     <BrowserRouter>
       <Header />
       <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/register" exact component={Register} />
+        <Route exact path="/" component={Home} />
+        <Route path="/register" component={Register} />
       </Switch>
     </BrowserRouter>
   );
