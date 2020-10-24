@@ -107,7 +107,6 @@ User.prototype.register = async function () {
     } else {
       reject(this.errors);
     }
-    return this.errors;
   });
 };
 

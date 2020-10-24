@@ -18,6 +18,8 @@ exports.register = (req, res) => {
     }
 
     let user = new User({ fields, files });
+    console.log(fields);
+    console.log(files);
     user
       .register()
       .then(function () {
