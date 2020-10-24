@@ -2,7 +2,11 @@ const User = require("../models/User");
 const formidable = require("formidable");
 
 exports.home = (req, res) => {
-  res.send("This is the home page");
+  if (req.session.user) {
+    res.send("This page will show the user profile later");
+  } else {
+    res.redirect("/");
+  }
 };
 
 exports.register = (req, res) => {
@@ -12,9 +16,6 @@ exports.register = (req, res) => {
     if (err) {
       return res.status(400).json({ error: "Image could not be uploaded" });
     }
-
-    // console.log(fields);
-    // console.log(files);
 
     let user = new User({ fields, files });
     user

@@ -1,15 +1,18 @@
 import React from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Header from "./Header";
-import Footer from "./Footer";
 import Home from "./Home";
+import Register from "./Register";
 
 function App() {
   return (
-    <div>
+    <BrowserRouter>
       <Header />
-      <Home />
-      <Footer />
-    </div>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/register" exact component={Register} />
+      </Switch>
+    </BrowserRouter>
   );
 }
 

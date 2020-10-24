@@ -3,10 +3,10 @@ const session = require("express-session");
 const app = express();
 const { MongoClient } = require("mongodb");
 const MongoStore = require("connect-mongo")(session);
+const flash = require("connect-flash");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
 require("dotenv").config();
 
 //db connect
@@ -31,10 +31,13 @@ async function main() {
 }
 main().catch(console.error);
 
+//for showing flash messages
+app.use(flash());
+
 //user routes
 const userRoute = require("./routes/userRoute");
 
-//middleware
+//middlewares
 app.use(morgan("dev"));
 //to be able to work with form data and json data
 app.use(express.json());

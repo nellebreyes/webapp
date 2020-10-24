@@ -1,21 +1,12 @@
 .form-container {
-  max-width: 40%;
-  margin: 0 auto;
-  position: relative;
-  margin-top: 18%;
-  transform: translateY(-10%);
+  max-width: 50%;
+  margin: 5rem auto;
 
-  .title {
-    padding-bottom: 5px;
-  }
-
-  .subtitle {
-    padding-bottom: 15px;
-  }
-
-  .center {
+  h2 {
     text-align: center;
+    margin-bottom: 2rem;
   }
+
   label {
     color: lightslategrey;
   }

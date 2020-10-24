@@ -1,20 +1,26 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
     <div className="header">
-      <div className="container">
+      <div className="header-container">
         <div className="logo">
           <h1>
-            <a href="index.js" alt="Web App">
+            <Link to="/" alt="Web App">
               Web App
-            </a>
+            </Link>
           </h1>
         </div>
         <div className="nav">
           <ul>
             <li>
-              <a href="#">Register</a>
+              <Link exact to="/">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/register">Register</Link>
             </li>
           </ul>
         </div>

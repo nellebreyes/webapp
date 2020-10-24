@@ -13,18 +13,6 @@ User.prototype.validate = function () {
   let con = db.dbfunc;
   const usersCollection = con.collection("users");
   return new Promise(async (resolve, reject) => {
-    if (this.username == "") {
-      this.errors.push("Username is required.");
-    }
-    if (!validator.isAlpha(this.username)) {
-      this.errors.push("Username must only contain letters.");
-    }
-    if (
-      this.username.length > 0 &&
-      (this.username.length < 4 || this.username.length > 30)
-    ) {
-      this.errors.push("Username must be between 4-30 characters.");
-    }
     if (this.password == "") {
       this.errors.push(
         "Password must be between 8-30 alphanumeric characters."
@@ -57,12 +45,13 @@ User.prototype.validate = function () {
     if (this.photo.size == 0 || this.photo.size > 100000) {
       this.errors.push("Photo is required.");
     } else if (
-      validator.isMimeType(this.photo.contentType) == "image/jpeg" ||
-      validator.isMimeType(this.photo.contentType) == "image/giff" ||
-      validator.isMimeType(this.photo.contentType) == "image/jpg" ||
-      validator.isMimeType(this.photo.contentType) == "image/webp"
+      validator.isMimeType(this.photo.contentType) != "image/jpeg" ||
+      validator.isMimeType(this.photo.contentType) != "image/giff" ||
+      validator.isMimeType(this.photo.contentType) != "image/jpg" ||
+      validator.isMimeType(this.photo.contentType) != "image/webp" ||
+      validator.isMimeType(this.photo.contentType) != "image/tiff"
     ) {
-      this.errors.push("Photo must be in jpg, png or jpeg format");
+      this.errors.push("Photo must be in jpg,png,giff,tiff or webp format");
     }
 
     //only when the email is valid then check to see if it's taken
@@ -88,12 +77,12 @@ User.prototype.register = async function () {
       size: photoObj.size,
     };
 
-    this.username = fields.username.toLowerCase();
-    this.email = fields.email.toLowerCase();
+    //this.username = fields.username.toLowerCase();
+    this.email = fields.email.toLowerCase().trim();
     this.password = fields.password;
     this.confirmPassword = fields.confirmPassword;
     this.photo = photo;
-    console.log(photo.name);
+    //console.log(photo.name);
     //step 1 validate user data //since we added async function to validate method, we need to make sure that that is
     //completed before we allow other steps to happen
     await this.validate();
@@ -101,7 +90,7 @@ User.prototype.register = async function () {
     //step 2 connect to db
     if (!this.errors.length) {
       let con = db.dbfunc;
-      console.log(con.databaseName);
+      // console.log(con.databaseName);
       const usersCollection = con.collection("users");
 
       let salt = bycrypt.genSaltSync(10); //number of salt chars
